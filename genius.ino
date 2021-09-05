@@ -83,8 +83,7 @@ void loop() {
 }
 
 void insertSequence() {
-  int nextSequence = random(3, 7);
-  sequence[actualRound] = nextSequence;
+  sequence[actualRound] = leds[random(LED_COUNT)];
 }
 
 void showSequence() {
