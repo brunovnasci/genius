@@ -12,8 +12,8 @@
 
 // TODO: Buzzer!
 
-int lastButtonState;
-int currentButtonState;
+int lastGameToggleState;
+int currentGameToggleState;
 int leds[LED_COUNT] = {
   RED,
   GREEN,
@@ -35,14 +35,14 @@ int ledTone[LED_COUNT] = {
   740
 };
 
-int combination[200];
-int playerInput[200];
 bool isGameOver = false;
+int sequence[200];
+int playerSequenceInput[200];
 int actualRound = 0;
 
 void setup() {
   Serial.begin(9600);
-  currentButtonState = digitalRead(GAME_TOGGLE);
+  currentGameToggleState = digitalRead(GAME_TOGGLE);
 
   pinMode(GAME_TOGGLE, INPUT);
   pinMode(RED_PIN, INPUT);
@@ -56,17 +56,17 @@ void setup() {
 }
 
 void resetGameContext() {
-  combination[200] = {};
-  playerInput[200] = {};
   isGameOver = false;
+  sequence[200] = {};
+  playerSequenceInput[200] = {};
   actualRound = 0;
 }
 
 bool gameToggle() {
-  lastButtonState    = currentButtonState;
-  currentButtonState = digitalRead(GAME_TOGGLE);
+  lastGameToggleState    = currentGameToggleState;
+  currentGameToggleState = digitalRead(GAME_TOGGLE);
 
-  return lastButtonState == LOW && currentButtonState == HIGH;
+  return lastGameToggleState == LOW && currentGameToggleState == HIGH;
 }
 
 void loop() {
@@ -84,12 +84,12 @@ void loop() {
 
 void insertSequence() {
   int nextSequence = random(3, 7);
-  combination[actualRound] = nextSequence;
+  sequence[actualRound] = nextSequence;
 }
 
 void showSequence() {
   for (int sequenceIndex = 0; sequenceIndex <= actualRound; sequenceIndex++) {
-    flashLed(combination[sequenceIndex], 500, 500);
+    flashLed(sequence[sequenceIndex], 500, 500);
   }
 }
 
@@ -110,7 +110,7 @@ void receivePlayerInput(int sequenceIndex) {
     for (int ledIndex = 0; ledIndex <= LED_COUNT - 1; ledIndex++) {
       if (digitalRead(ledPins[ledIndex]) == HIGH) {
         int inputtedLed = leds[ledIndex];
-        playerInput[sequenceIndex] = inputtedLed;
+        playerSequenceInput[sequenceIndex] = inputtedLed;
         flashLed(inputtedLed, 300, 0);
         inputted = true;
       }
@@ -119,7 +119,7 @@ void receivePlayerInput(int sequenceIndex) {
 }
 
 void validatePlayerInput(int sequenceIndex) {
-  if (playerInput[sequenceIndex] != combination[sequenceIndex]) {
+  if (playerSequenceInput[sequenceIndex] != sequence[sequenceIndex]) {
     isGameOver = true;
   }
 }
