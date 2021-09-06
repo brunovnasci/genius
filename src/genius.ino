@@ -9,8 +9,10 @@
 #define GREEN_PIN 9
 #define YELLOW_PIN 10
 #define BLUE_PIN 11
-
-// TODO: Buzzer!
+#define RED_TONE 262
+#define GREEN_TONE 330
+#define YELLOW_TONE 494
+#define BLUE_TONE 740
 
 int lastGameToggleState;
 int currentGameToggleState;
@@ -26,13 +28,6 @@ int ledPins[LED_COUNT] = {
   GREEN_PIN,
   YELLOW_PIN,
   BLUE_PIN
-};
-
-int ledTone[LED_COUNT] = {
-  262,
-  330,
-  494,
-  740
 };
 
 bool isGameOver = false;
@@ -110,7 +105,7 @@ void receivePlayerInput(int sequenceIndex) {
       if (digitalRead(ledPins[ledIndex]) == HIGH) {
         int inputtedLed = leds[ledIndex];
         playerSequenceInput[sequenceIndex] = inputtedLed;
-        flashLed(inputtedLed, 300, 0);
+        flashLed(inputtedLed, 500, 500);
         inputted = true;
       }
     }
@@ -120,12 +115,42 @@ void receivePlayerInput(int sequenceIndex) {
 void validatePlayerInput(int sequenceIndex) {
   if (playerSequenceInput[sequenceIndex] != sequence[sequenceIndex]) {
     isGameOver = true;
+    gameOverEffect();
   }
 }
 
 void flashLed(int ledPin, int timeActive, int afterDelay) {
   digitalWrite(ledPin, HIGH);
+  tone(BUZZER, getToneByLed(ledPin));
   delay(timeActive);
   digitalWrite(ledPin, LOW);
+  noTone(BUZZER);
   delay(afterDelay);
+}
+
+int getToneByLed(int ledPin) {
+  switch (ledPin) {
+  case RED:
+    return RED_TONE;
+  case BLUE:
+    return BLUE_TONE;
+  case YELLOW:
+    return YELLOW_TONE;
+  case GREEN:
+    return GREEN_TONE;
+  }
+}
+
+void gameOverEffect() { 
+  tone(BUZZER, 200);
+  digitalWrite(RED, HIGH);
+  digitalWrite(BLUE, HIGH);
+  digitalWrite(YELLOW, HIGH);
+  digitalWrite(GREEN, HIGH);
+  delay(500);
+  noTone(BUZZER);
+  digitalWrite(RED, LOW);
+  digitalWrite(BLUE, LOW);
+  digitalWrite(YELLOW, LOW);
+  digitalWrite(GREEN, LOW);
 }
