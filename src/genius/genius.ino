@@ -130,18 +130,18 @@ void flashLed(int ledPin, int timeActive, int afterDelay) {
 
 int getToneByLed(int ledPin) {
   switch (ledPin) {
-  case RED:
-    return RED_TONE;
-  case BLUE:
-    return BLUE_TONE;
-  case YELLOW:
-    return YELLOW_TONE;
-  case GREEN:
-    return GREEN_TONE;
+    case RED:
+      return RED_TONE;
+    case BLUE:
+      return BLUE_TONE;
+    case YELLOW:
+      return YELLOW_TONE;
+    case GREEN:
+      return GREEN_TONE;
   }
 }
 
-void gameOverEffect() { 
+void gameOverEffect() {
   tone(BUZZER, 200);
   digitalWrite(RED, HIGH);
   digitalWrite(BLUE, HIGH);
